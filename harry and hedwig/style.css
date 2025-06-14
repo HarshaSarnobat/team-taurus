@@ -1,0 +1,54 @@
+
+ body {
+  background: url('WhatsApp Image 2025-06-14 at 01.33.20_72ae48fe.jpg') no-repeat center center fixed;
+  background-size: cover;
+  color: white;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 20px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(5, 60px);
+  grid-template-rows: repeat(5, 60px);
+  gap: 5px;
+  margin: 20px auto;
+  width: max-content;
+}
+.cell {
+  width: 60px;
+  height: 60px;
+  background-color: #2e3b55;
+  border: 1px solid #455a75;
+  background-size: cover;
+  background-position: center;
+}
+.player {
+  background-image: url('https://static.vecteezy.com/system/resources/thumbnails/062/431/867/small_2x/adorable-cartoon-burrowing-owl-with-big-eyes-illustration-vector.jpg'); /* Harry Potter */
+}
+.goal {
+  background-image: url('https://img.freepik.com/premium-vector/vector-chibi-harry-potter_969040-26.jpg'); /* Harry Potter */
+}
+
+.question-box {
+  margin-top: 20px;
+}
+input {
+  padding: 10px;
+  width: 300px;
+  font-size: 16px;
+  margin-top: 10px;
+}
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  margin-left: 10px;
+  cursor: pointer;
+}
+button:hover {
+  background-color: #2980b9;
+}
