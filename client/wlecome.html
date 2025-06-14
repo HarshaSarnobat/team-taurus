@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="MYNA - Connecting Minds, One chirp at a time">
+  <meta name="keywords" content="MYNA, social platform, community, connection">
+  <meta name="author" content="MYNA Team">
+  <title>EduGamify Welcome</title>
+  <link rel="stylesheet" href="welcome.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playwrite+DK+Loopet:wght@100..400&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="top-bar">
+    <div class="logo-container-top">
+      <img src="headwick1.png" alt="MYNA Logo" class="logo" loading="lazy" />
+    </div>
+    <button class="hamburger" aria-label="Toggle navigation menu" aria-expanded="false">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <nav class="nav-links" aria-label="Main navigation">
+      <a href="main.html" class="nav-btn" aria-label="Go to Home page">Home</a>
+      <a href="contact.html" class="nav-btn" aria-label="Go to Contact page">Contact Me</a>
+    </nav>
+  </header>
+
+  <main class="logo-container">
+    <h1 class="brand">EDUGAMIFY</h1>
+    <div class="buttons">
+      <a href="/new.html" class="chirp-btn">LET'S PLAY</a>
+    </div>
+    <p class="slogan">“Let's Play and learn togther!”</p>
+  </main>
+
+  <footer>
+    <span>|ONE STEP AT A TIME|</span><br>
+    Shaped by Curiosity, Coded with Care
+  </footer>
+
+  <script>
+    const hamburger = document.querySelector('.hamburger');
+    const navLinks = document.querySelector('.nav-links');
+    hamburger.addEventListener('click', () => {
+      const isExpanded = hamburger.getAttribute('aria-expanded') === 'true';
+      hamburger.setAttribute('aria-expanded', !isExpanded);
+      navLinks.classList.toggle('active');
+    });
+  </script>
+</body>
+</html>
