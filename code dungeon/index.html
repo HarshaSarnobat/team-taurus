@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Code Dungeon</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="game-container">
+    <header>
+      <h1>🧙 Code Dungeon</h1>
+    </header>
+    <div class="stats">
+      <div class="health">❤️ Health: <span id="health">3</span></div>
+      <div class="inventory">🎒 Inventory: <span id="inventory">None</span></div>
+    </div>
+    <main class="terminal">
+      <div id="story-text">
+        <p>Welcome, adventurer! Solve coding challenges to escape the dungeon.</p>
+      </div>
+      <div class="question-box">
+        <p id="question">Press Start to begin your quest.</p>
+        <form id="answer-form">
+          <input type="text" id="answer" placeholder="Type your answer..." required />
+          <button type="submit">Submit</button>
+        </form>
+        <button id="start-btn">▶️ Start Game</button>
+      </div>
+    </main>
+    <footer>
+      <p>© 2025 Code Dungeon</p>
+    </footer>
+  </div>
+  <script>
+    const questions = [
+      {
+        text: "What is the output of print(3 * 'abc')?",
+        answer: "abcabcabc"
+      },
+      {
+        text: "What keyword is used to define a function in Python?",
+        answer: "def"
+      },
+      {
+        text: "What is the correct syntax to import the math module?",
+        answer: "import math"
+      },
+      {
+        text: "What will print(len([1, 2, 3, 4])) return?",
+        answer: "4"
+      },
+      {
+        text: "Which operator is used for floor division in Python?",
+        answer: "//"
+      }
+    ];
+
+    let current = 0;
+    let health = 3;
+    const questionBox = document.getElementById("question");
+    const storyText = document.getElementById("story-text");
+    const form = document.getElementById("answer-form");
+    const answerInput = document.getElementById("answer");
+    const healthSpan = document.getElementById("health");
+    const startBtn = document.getElementById("start-btn");
+
+    function showQuestion() {
+      if (current < questions.length) {
+        questionBox.textContent = questions[current].text;
+      } else {
+        questionBox.textContent = "🎉 You escaped the dungeon! Well done!";
+        form.style.display = "none";
+      }
+    }
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const userAnswer = answerInput.value.trim().toLowerCase();
+      const correctAnswer = questions[current].answer.toLowerCase();
+      if (userAnswer === correctAnswer) {
+        storyText.innerHTML += `<p>✅ Correct! You move deeper into the dungeon.</p>`;
+        current++;
+        showQuestion();
+      } else {
+        health--;
+        healthSpan.textContent = health;
+        storyText.innerHTML += `<p>❌ Wrong answer! Try again. (${health} health left)</p>`;
+        if (health <= 0) {
+          questionBox.textContent = "☠️ You have perished in the dungeon.";
+          form.style.display = "none";
+        }
+      }
+      answerInput.value = "";
+      storyText.scrollTop = storyText.scrollHeight;
+    });
+
+    startBtn.addEventListener("click", () => {
+      current = 0;
+      health = 3;
+      healthSpan.textContent = health;
+      form.style.display = "flex";
+      answerInput.value = "";
+      storyText.innerHTML = "<p>The dungeon doors creak open...</p>";
+      showQuestion();
+      startBtn.style.display = "none";
+    });
+  </script>
+</body>
+</html>
