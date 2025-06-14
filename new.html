@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login/Register/Forgot Password/OTP Verification UI</title>
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet"/>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link rel="stylesheet" href="Css.css">
+  <style>* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  width: 100vw;
+
+  background-image: url('/client/bg1.jpg');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-attachment: fixed;
+  background-size: cover;
+
+  font-family: 'Outfit', 'Segoe UI', sans-serif;
+  
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow-x: hidden;
+}
+.container {
+  background: #d0e6ff;
+  border-radius: 12px;
+  padding: 2rem;
+  width: 350px;
+  max-width: 100%;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 1s ease;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+h2 {
+  text-align: center;
+  margin-bottom: 1rem;
+  color: #333;
+}
+.input-group {
+  position: relative;
+  margin-bottom: 1rem;
+}
+.input-group i {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #aaa;
+}
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+input[type="number"] {
+  width: 100%;
+  padding: 10px 10px 10px 35px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  transition: 0.3s;
+}
+select {
+  width: 100%;
+  padding: 10px 10px 10px 35px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 1rem;
+  color: #333;
+  transition: 0.3s;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px;
+}
+select:focus,
+input:focus {
+  border-color: #667eea;
+  outline: none;
+  box-shadow: 0 0 5px rgba(102, 126, 234, 0.5);
+}
+button {
+  width: 100%;
+  padding: 10px;
+  background: #667eea;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: background 0.3s;
+  font-size: 1rem;
+}
+button:hover {
+  background: #5a67d8;
+}
+.form-box {
+  display: none;
+  animation: fadeIn 1s ease;
+}
+.form-box.active {
+  display: block;
+}
+.toggle-link,
+.options a {
+  color: #667eea;
+  cursor: pointer;
+  display: block;
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+.options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  margin-top: 10px;
+}
+.error {
+  color: red;
+  font-size: 0.9rem;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+@media (max-width: 400px) {
+  .container {
+    width: 100%;
+    padding: 1.5rem;
+  }
+}
+/* OTP Input Styles */
+.otp-inputs {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+.otp-inputs input {
+  width: 40px;
+  height: 40px;
+  text-align: center;
+  font-size: 1.2rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+.otp-inputs input:focus {
+  border-color: #667eea;
+  outline: none;
+  box-shadow: 0 0 5px rgba(102, 126, 234, 0.5);
+}
+/* Toast Notification Styles */
+.toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+.toast {
+  min-width: 250px;
+  max-width: 350px;
+  background-color: #fff;
+  color: #333;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 10px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transform: translateX(120%);
+  transition: transform 0.6s ease;
+}
+.toast.show {
+  transform: translateX(0);
+}
+.toast-icon {
+  width: 24px;
+  height: 24px;
+  margin-right: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: white;
+  flex-shrink: 0;
+}
+.toast-content {
+  flex-grow: 1;
+}
+.toast-title {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+.toast-message {
+  font-size: 0.9rem;
+}
+.toast-close {
+  background: none;
+  border: none;
+  color: #777;
+  cursor: pointer;
+  margin-left: 10px;
+  padding: 0;
+  font-size: 16px;
+  width: auto;
+}
+.toast-success {
+  border-left: 5px solid #28a745;
+}
+.toast-success .toast-icon {
+  background-color: #28a745;
+}
+.toast-error {
+  border-left: 5px solid #dc3545;
+}
+.toast-error .toast-icon {
+  background-color: #dc3545;
+}
+.toast-info {
+  border-left: 5px solid #17a2b8;
+}
+.toast-info .toast-icon {
+  background-color: #17a2b8;
+}
+.toast-warning {
+  border-left: 5px solid #ffc107;
+}
+.toast-warning .toast-icon {
+  background-color: #ffc107;
+}
+/* OTP Sent Success Modal */
+.otp-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+.otp-modal.show {
+  opacity: 1;
+  visibility: visible;
+}
+.otp-modal-content {
+  background: white;
+  border-radius: 12px;
+  max-width: 400px;
+  width: 90%;
+  padding: 25px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  position: relative;
+  transform: translateY(-20px);
+  transition: transform 0.3s ease;
+  text-align: center;
+}
+.otp-modal.show .otp-modal-content {
+  transform: translateY(0);
+}
+.otp-modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 22px;
+  color: #777;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 5px;
+}
+.otp-modal-icon {
+  font-size: 50px;
+  color: #28a745;
+  margin-bottom: 15px;
+}
+.otp-modal-title {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  color: #333;
+}
+.otp-modal-message {
+  margin-bottom: 20px;
+  color: #555;
+  font-size: 1rem;
+}
+.otp-modal-code {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #333;
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 10px;
+  letter-spacing: 8px;
+  margin: 15px 0;
+  display: inline-block;
+}
+.otp-modal-btn {
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.otp-modal-btn:hover {
+  background: #5a67d8;
+}
+/* Welcome Animation */
+.welcome-animation {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 2000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s;
+}
+.welcome-animation.show {
+  opacity: 1;
+  visibility: visible;
+}
+.welcome-text {
+  font-size: 3rem;
+  color: white;
+  text-align: center;
+  margin-bottom: 20px;
+  opacity: 0;
+  transform: scale(0.5);
+}
+.welcome-animation.show .welcome-text {
+  animation: zoomIn 1s forwards, fadeOut 1s 2s forwards;
+}
+.user-name {
+  color: #667eea;
+  font-weight: bold;
+}
+@keyframes zoomIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}</style>
+</head>
+<body>
+ <div class="container">
+    <!-- Login Form -->
+    <form class="form-box active" id="loginForm" onsubmit="event.preventDefault(); login();">
+      <h2><i class="fas fa-sign-in-alt"></i> Login</h2>
+      <div class="error" id="loginError"></div>
+      <div class="input-group">
+        <i class="fa fa-user"></i>
+        <input type="text" id="loginUsername" placeholder="Username" />
+      </div>
+      <div class="input-group">
+        <i class="fa fa-lock"></i>
+        <input type="password" id="loginPassword" placeholder="Password" />
+      </div>
+      <div class="options">
+        <label><input type="checkbox" id="rememberMe" /> Remember me</label>
+        <a href="#" onclick="toggleForm('forgot'); return false;">Forgot password?</a>
+      </div>
+      <button type="submit">Log In</button>
+      <div class="toggle-link" onclick="toggleForm('register')">Don't have an account? Register</div>
+    </form>
+
+    <!-- Register Form (Modified to include role selection) -->
+    <form class="form-box" id="registerForm" onsubmit="event.preventDefault(); register();">
+      <h2><i class="fas fa-user-plus"></i> Register</h2>
+      <div class="error" id="registerError"></div>
+      <div class="input-group">
+        <i class="fa fa-id-card"></i>
+        <input type="text" id="registerName" placeholder="Name" />
+      </div>
+      <div class="input-group">
+        <i class="fa fa-user"></i>
+        <input type="text" id="registerUsername" placeholder="Username" />
+      </div>
+      <div class="input-group">
+        <i class="fa fa-envelope"></i>
+        <input type="email" id="registerEmail" placeholder="Email" />
+      </div>
+      <div class="input-group">
+        <i class="fa fa-phone"></i>
+        <input type="tel" id="registerPhoneNumber" placeholder="Phone Number" />
+      </div>
+      <div class="input-group">
+        <i class="fa fa-users"></i>
+        <select id="registerRole" required>
+          <option value="" disabled selected>Select Role</option>
+          <option value="mentor">Mentor</option>
+          <option value="student">Student</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <i class="fa fa-lock"></i>
+        <input type="password" id="registerPassword" placeholder="Password" />
+      </div>
+      <button type="submit">Register</button>
+      <div class="toggle-link" onclick="toggleForm('login')">Already have an account? Log in</div>
+    </form>
+
+    <!-- Forgot Password Form - Step 1: Request OTP -->
+    <form class="form-box" id="forgotForm" onsubmit="event.preventDefault(); requestPasswordResetOTP();">
+      <h2><i class="fas fa-unlock-alt"></i> Forgot Password</h2>
+      <div class="error" id="forgotError"></div>
+      <div class="input-group">
+        <i class="fa fa-user"></i>
+        <input type="text" id="forgotUsername" placeholder="Username" />
+      </div>
+      <button type="submit">Send OTP</button>
+      <div class="toggle-link" onclick="toggleForm('login')">Back to Login</div>
+    </form>
+
+    <!-- OTP Verification Form for Password Reset -->
+    <form class="form-box" id="otpForm" onsubmit="event.preventDefault(); verifyPasswordResetOtp();">
+      <h2><i class="fas fa-key"></i> OTP Verification</h2>
+      <div class="error" id="otpError"></div>
+      <p class="otp-info" style="text-align: center; font-size: 0.9rem; margin-bottom: 1rem;">Enter the OTP sent to your email/username</p>
+      <div class="otp-inputs">
+        <input type="type" maxlength="1" oninput="moveToNext(this, 'otp2')" id="otp1" />
+        <input type="type" maxlength="1" oninput="moveToNext(this, 'otp3')" id="otp2" />
+        <input type="type" maxlength="1" oninput="moveToNext(this, 'otp4')" id="otp3" />
+        <input type="type" maxlength="1" oninput="moveToNext(this, null)" id="otp4" />
+      </div>
+      <button id="verifyOtpBtn" type="submit">Verify OTP</button>
+      <button type="button" onclick="resendOtp('passwordReset')">Resend OTP</button>
+      <div class="toggle-link" onclick="toggleForm('login')">Back to Login</div>
+    </form>
+
+    <!-- Reset Password Form (After OTP verification) -->
+    <form class="form-box" id="resetPasswordForm" onsubmit="event.preventDefault(); resetPassword();">
+      <h2><i class="fas fa-lock"></i> Reset Password</h2>
+      <div class="error" id="resetPasswordError"></div>
+      <div class="input-group">
+        <i class="fa fa-lock"></i>
+        <input type="password" id="newPassword" placeholder="New Password" />
+      </div>
+      <div class="input-group">
+        <i class="fa fa-lock"></i>
+        <input type="password" id="confirmPassword" placeholder="Confirm New Password" />
+      </div>
+      <button type="submit">Reset Password</button>
+      <div class="toggle-link" onclick="toggleForm('login')">Back to Login</div>
+    </form>
+
+    <!-- OTP Verification Form for Registration -->
+    <form class="form-box" id="registrationOtpForm" onsubmit="event.preventDefault(); verifyRegistrationOtp();">
+      <h2><i class="fas fa-key"></i> OTP Verification</h2>
+      <div class="error" id="registrationOtpError"></div>
+      <p class="otp-info" style="text-align: center; font-size: 0.9rem; margin-bottom: 1rem;">Enter the OTP sent to your email/username</p>
+      <div class="otp-inputs">
+        <input type="type" maxlength="1" oninput="moveToNext(this, 'regOtp2')" id="regOtp1" />
+        <input type="type" maxlength="1" oninput="moveToNext(this, 'regOtp3')" id="regOtp2" />
+        <input type="type" maxlength="1" oninput="moveToNext(this, 'regOtp4')" id="regOtp3" />
+        <input type="type" maxlength="1" oninput="moveToNext(this, null)" id="regOtp4" />
+      </div>
+      <button id="verifyRegistrationOtpBtn" type="submit">Verify OTP</button>
+      <button type="button" onclick="resendOtp('registration')">Resend OTP</button>
+    </form>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+  
+  <!-- OTP Modal -->
+  <div class="otp-modal" id="otpModal">
+    <div class="otp-modal-content">
+      <button class="otp-modal-close" onclick="closeOtpModal()"><i class="fas fa-times"></i></button>
+      <div class="otp-modal-icon"><i class="fas fa-envelope-open-text"></i></div>
+      <h3 class="otp-modal-title">OTP Sent Successfully!</h3>
+      <p class="otp-modal-message">We've sent a verification code to your email. The code will expire in <span id="otpExpiryTime">5</span> minutes.</p>
+      <div class="otp-modal-code" id="otpDisplayCode">1234</div>
+      <p class="otp-modal-message">In a real-world scenario, this would be sent to your email/phone only.</p>
+      <button class="otp-modal-btn" onclick="closeOtpModal()">Continue</button>
+    </div>
+  </div>
+  
+  <!-- Welcome Animation -->
+  <div class="welcome-animation" id="welcomeAnimation">
+    <div class="welcome-text">Welcome, <span id="welcomeUsername" class="user-name">User</span>!</div>
+  </div>
+
+<script>
+  // Keep track of the username for password reset flow
+let passwordResetUsername = '';
+let otpTimerInterval = null;
+
+// Function to toggle between forms
+function toggleForm(form) {
+  const forms = ['login', 'register', 'forgot', 'otp', 'resetPassword', 'registrationOtp'];
+  forms.forEach(f => {
+    document.getElementById(f + 'Form').classList.remove('active');
+  });
+  document.getElementById(form + 'Form').classList.add('active');
+  clearErrors();
+  
+  // Clear any active OTP timer when switching forms
+  if (otpTimerInterval) {
+    clearInterval(otpTimerInterval);
+    otpTimerInterval = null;
+  }
+}
+
+// Function to clear error messages
+function clearErrors() {
+  const errors = document.querySelectorAll('.error');
+  errors.forEach(error => {
+    error.textContent = '';
+  });
+}
+
+// Function to save users by role
+function saveUserByRole(user) {
+  const role = user.role;
+  const roleUsers = JSON.parse(localStorage.getItem(`${role}Users`) || '[]');
+  roleUsers.push(user);
+  localStorage.setItem(`${role}Users`, JSON.stringify(roleUsers));
+}
+
+// Function to handle login
+function login() {
+  const username = document.getElementById('loginUsername').value.trim();
+  const password = document.getElementById('loginPassword').value.trim();
+  const remember = document.getElementById('rememberMe').checked;
+  const errorMsg = document.getElementById('loginError');
+  
+  // Basic validation
+  if (!username || !password) {
+    errorMsg.textContent = 'Please enter both username and password.';
+    return;
+  }
+  
+  const users = JSON.parse(localStorage.getItem('users') || '{}');
+  
+  if (!users[username]) {
+    errorMsg.textContent = 'User not found.';
+    return;
+  }
+  
+  if (users[username].password !== password) {
+    errorMsg.textContent = 'Incorrect password.';
+    return;
+  }
+  
+  // Handle remember me
+  if (remember) {
+    localStorage.setItem('rememberedUser', username);
+  } else {
+    localStorage.removeItem('rememberedUser');
+  }
+  
+  // Show welcome animation
+  document.getElementById('welcomeUsername').textContent = users[username].name || username;
+  const welcomeAnim = document.getElementById('welcomeAnimation');
+  welcomeAnim.classList.add('show');
+  
+  setTimeout(() => {
+    welcomeAnim.classList.remove('show');
+    window.location.href = "/main.html"; // Redirect to main page
+  }, 3000);
+  
+  errorMsg.textContent = '';
+  
+  // Show toast notification
+  showToast('Success', 'Login successful!', 'success');
+}
+
+// Function to handle registration
+function register() {
+  const username = document.getElementById('registerUsername').value.trim();
+  const name = document.getElementById('registerName').value.trim();
+  const phoneNumber = document.getElementById('registerPhoneNumber').value.trim();
+  const email = document.getElementById('registerEmail').value.trim();
+  const role = document.getElementById('registerRole').value;
+  const password = document.getElementById('registerPassword').value.trim();
+  const errorMsg = document.getElementById('registerError');
+  
+  // Basic validation
+  if (!username || !email || !password || !name || !phoneNumber || !role) {
+    errorMsg.textContent = 'Please fill out all fields.';
+    return;
+  }
+  
+  // Email validation
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    errorMsg.textContent = 'Please enter a valid email address.';
+    return;
+  }
+  
+  const users = JSON.parse(localStorage.getItem('users') || '{}');
+  
+  if (users[username]) {
+    errorMsg.textContent = 'Username already exists.';
+    return;
+  }
+  
+  // Generate a 4-digit OTP
+  const otp = Math.floor(1000 + Math.random() * 9000).toString();
+  const otpExpiry = Date.now() + 5 * 60 * 1000; // 5 minutes from now
+  
+  users[username] = {
+    name,
+    email,
+    phoneNumber,
+    role,
+    password,
+    otp,
+    otpExpiry,
+    verified: false
+  };
+  
+  localStorage.setItem('users', JSON.stringify(users));
+  saveUserByRole(users[username]); // Save to role-specific storage
+  
+  // Show OTP modal
+  document.getElementById('otpDisplayCode').textContent = otp;
+  document.getElementById('otpModal').classList.add('show');
+  
+  errorMsg.textContent = '';
+  
+  // Set up for registration OTP verification
+  toggleForm('registrationOtp');
+}
+
+// Function to close OTP modal
+function closeOtpModal() {
+  document.getElementById('otpModal').classList.remove('show');
+}
+
+// Function to request OTP for password reset
+function requestPasswordResetOTP() {
+  const username = document.getElementById('forgotUsername').value.trim();
+  const errorMsg = document.getElementById('forgotError');
+  
+  if (!username) {
+    errorMsg.textContent = 'Please enter your username.';
+    return;
+  }
+  
+  const users = JSON.parse(localStorage.getItem('users') || '{}');
+  
+  if (!users[username]) {
+    errorMsg.textContent = 'User not found.';
+    return;
+  }
+  
+  // Store username for the password reset 
+  passwordResetUsername = username;
+  
+  // Generate a 4-digit OTP
+  const otp = Math.floor(1000 + Math.random() * 9000).toString();
+  const otpExpiry = Date.now() + 5 * 60 * 1000; 
+  
+  users[username].resetOtp = otp;
+  users[username].resetOtpExpiry = otpExpiry;
+  localStorage.setItem('users', JSON.stringify(users));
+  
+  // Show OTP modal
+  document.getElementById('otpDisplayCode').textContent = otp;
+  document.getElementById('otpModal').classList.add('show');
+  
+  errorMsg.textContent = '';
+  toggleForm('otp');
+}
+
+// Function to verify OTP for password reset
+function verifyPasswordResetOtp() {
+  const enteredOtp = document.getElementById('otp1').value +
+                    document.getElementById('otp2').value +
+                    document.getElementById('otp3').value +
+                    document.getElementById('otp4').value;
+  const errorDiv = document.getElementById('otpError');
+  
+  if (!enteredOtp || enteredOtp.length !== 4) {
+    errorDiv.textContent = 'Please enter a valid OTP.';
+    return;
+  }
+  
+  const users = JSON.parse(localStorage.getItem('users') || '{}');
+  const user = users[passwordResetUsername];
+  
+  if (!user) {
+    errorDiv.textContent = 'User not found. Please try again.';
+    return;
+  }
+  
+  if (user.resetOtp !== enteredOtp) {
+    errorDiv.textContent = 'Invalid OTP. Please try again.';
+    return;
+  }
+  
+  if (Date.now() > user.resetOtpExpiry) {
+    errorDiv.textContent = 'OTP has expired. Please request a new one.';
+    return;
+  }
+  
+  // OTP verified, move to password reset form
+  toggleForm('resetPassword');
+}
+
+// Function to verify OTP for registration
+function verifyRegistrationOtp() {
+  const enteredOtp = document.getElementById('regOtp1').value +
+                    document.getElementById('regOtp2').value +
+                    document.getElementById('regOtp3').value +
+                    document.getElementById('regOtp4').value;
+  const errorDiv = document.getElementById('registrationOtpError');
+  
+  if (!enteredOtp || enteredOtp.length !== 4) {
+    errorDiv.textContent = 'Please enter a valid OTP.';
+    return;
+  }
+  
+  const users = JSON.parse(localStorage.getItem('users') || '{}');
+  let userFound = false;
+  
+  for (let username in users) {
+    const user = users[username];
+    if (user.otp === enteredOtp) {
+      userFound = true;
+      
+      if (Date.now() > user.otpExpiry) {
+        errorDiv.textContent = 'OTP has expired. Please request a new one.';
+        return;
+      }
+      
+      user.verified = true;
+      delete user.otp;
+      delete user.otpExpiry;
+      localStorage.setItem('users', JSON.stringify(users));
+      
+      showToast('Success', 'Account verified successfully!', 'success');
+      errorDiv.textContent = '';
+      toggleForm('login');
+      return;
+    }
+  }
+  
+  if (!userFound) {
+    errorDiv.textContent = 'Invalid OTP. Please try again.';
+  }
+}
+
+// Function to handle password reset after OTP verification
+function resetPassword() {
+  const newPassword = document.getElementById('newPassword').value.trim();
+  const confirmPassword = document.getElementById('confirmPassword').value.trim();
+  const errorMsg = document.getElementById('resetPasswordError');
+  
+  if (!newPassword || !confirmPassword) {
+    errorMsg.textContent = 'Please fill out all password fields.';
+    return;
+  }
+  
+  if (newPassword !== confirmPassword) {
+    errorMsg.textContent = 'Passwords do not match.';
+    return;
+  }
+  
+  const users = JSON.parse(localStorage.getItem('users') || '{}');
+  const user = users[passwordResetUsername];
+  
+  if (!user) {
+    errorMsg.textContent = 'User not found. Please try again.';
+    return;
+  }
+  
+  // Update the password
+  user.password = newPassword;
+  user.passwordLastChanged = Date.now();
+  
+  // Clear reset OTP data
+  delete user.resetOtp;
+  delete user.resetOtpExpiry;
+  localStorage.setItem('users', JSON.stringify(users));
+  
+  showToast('Success', 'Password reset successfully!', 'success');
+  errorMsg.textContent = '';
+  passwordResetUsername = ''; // Clear the stored username
+  toggleForm('login');
+}
+
+// Function to move focus to next OTP input
+function moveToNext(current, nextFieldID) {
+  // Allow only numbers
+  current.value = current.value.replace(/\D/g, '');
+  
+  if (current.value.length === 1 && nextFieldID) {
+    document.getElementById(nextFieldID).focus();
+  }
+  
+  // Handle backspace - move to previous input
+  current.addEventListener('keydown', function(e) {
+    if (e.key === 'Backspace' && current.value.length === 0) {
+      const inputs = current.closest('.otp-inputs').querySelectorAll('input');
+      for (let i = 0; i < inputs.length; i++) {
+        if (inputs[i] === current && i > 0) {
+          inputs[i-1].focus();
+          break;
+        }
+      }
+    }
+  });
+}
+
+// Function to resend OTP
+function resendOtp(type) {
+  const users = JSON.parse(localStorage.getItem('users') || '{}');
+  
+  if (type === 'passwordReset') {
+    if (!passwordResetUsername || !users[passwordResetUsername]) {
+      showToast('Error', 'User not found. Please try again.', 'error');
+      return;
+    }
+    
+    const user = users[passwordResetUsername];
+    const newOtp = Math.floor(1000 + Math.random() * 9000).toString();
+    const newExpiry = Date.now() + 5 * 60 * 1000; // 5 minutes from now
+    
+    user.resetOtp = newOtp;
+    user.resetOtpExpiry = newExpiry;
+    localStorage.setItem('users', JSON.stringify(users));
+    
+    // OTP popup
+    document.getElementById('otpDisplayCode').textContent = newOtp;
+    document.getElementById('otpModal').classList.add('show');
+    
+  } else if (type === 'registration') {
+    let userFound = false;
+    let foundUsername = '';
+    
+    for (let username in users) {
+      const user = users[username];
+      if (!user.verified) {
+        userFound = true;
+        foundUsername = username;
+        
+        const newOtp = Math.floor(1000 + Math.random() * 9000).toString();
+        const newExpiry = Date.now() + 5 * 60 * 1000; // 5 minutes from now
+        
+        user.otp = newOtp;
+        user.otpExpiry = newExpiry;
+        localStorage.setItem('users', JSON.stringify(users));
+        
+        // Display OTP popup
+        document.getElementById('otpDisplayCode').textContent = newOtp;
+        document.getElementById('otpModal').classList.add('show');
+        break;
+      }
+    }
+    
+    if (!userFound) {
+      showToast('Error', 'No unverified user found. Please register first.', 'error');
+    }
+  }
+}
+
+// Function to create and show toast notifications
+function showToast(title, message, type = 'info') {
+  const toastContainer = document.getElementById('toastContainer');
+  
+  // Create toast element
+  const toast = document.createElement('div');
+  toast.className = `toast toast-${type}`;
+  
+  // Create toast content
+  let icon = '';
+  switch(type) {
+    case 'success':
+      icon = '<i class="fas fa-check-circle"></i>';
+      break;
+    case 'error':
+      icon = '<i class="fas fa-exclamation-circle"></i>';
+      break;
+    case 'warning':
+      icon = '<i class="fas fa-exclamation-triangle"></i>';
+      break;
+    default:
+      icon = '<i class="fas fa-info-circle"></i>';
+  }
+  
+  toast.innerHTML = `
+    <div class="toast-icon">${icon}</div>
+    <div class="toast-content">
+      <div class="toast-title">${title}</div>
+      <div class="toast-message">${message}</div>
+    </div>
+    <button class="toast-close" onclick="this.parentElement.remove();">
+      <i class="fas fa-times"></i>
+    </button>
+  `;
+  
+  // Add toast to container
+  toastContainer.appendChild(toast);
+  
+  // Show toast with animation
+  setTimeout(() => {
+    toast.classList.add('show');
+  }, 10);
+  
+  // Auto-remove toast after 5 seconds
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => {
+      toast.remove();
+    }, 600);
+  }, 5000);
+}
+
+// Load remembered user on page load
+window.addEventListener('DOMContentLoaded', function() {
+  const rememberedUser = localStorage.getItem('rememberedUser');
+  if (rememberedUser) {
+    document.getElementById('loginUsername').value = rememberedUser;
+    document.getElementById('rememberMe').checked = true;
+  }
+  
+  const otpInputs = document.querySelectorAll('.otp-inputs input');
+  otpInputs.forEach(input => {
+    // Allow only numbers
+    input.addEventListener('input', function() {
+      this.value = this.value.replace(/\D/g, '');
+    });
+    
+    // Handle paste event for OTP
+    input.addEventListener('paste', function(e) {
+      e.preventDefault();
+      const pastedData = (e.clipboardData || window.clipboardData).getData('text');
+      const otpDigits = pastedData.replace(/\D/g, '').substring(0, 4);
+      
+      if (otpDigits.length === 4) {
+        const inputs = this.closest('.otp-inputs').querySelectorAll('input');
+        for (let i = 0; i < inputs.length && i < otpDigits.length; i++) {
+          inputs[i].value = otpDigits[i];
+        }
+      }
+    });
+  });
+});
+</script>
+</body>
+</html>
