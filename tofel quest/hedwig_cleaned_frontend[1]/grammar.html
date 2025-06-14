@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TOFEL Quest: Hogwarts Edition</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Georgia', serif;
+      background: #000;
+      color: #fff;
+      overflow: hidden;
+    }
+
+    #game-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    .character {
+      position: absolute;
+      width: 130px;
+      transition: all 2s ease-in-out;
+      animation: float 3s infinite ease-in-out;
+    }
+
+    #girl { bottom: 30%; left: -150px; }
+    #boy { bottom: 10%; right: -150px; }
+    .enter-scene-girl { left: 25% !important; }
+    .enter-scene-boy { right: 25% !important; }
+
+    #chat-box {
+      position: absolute;
+      bottom: 35%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.7);
+      border-radius: 20px;
+      padding: 20px;
+      width: 350px;
+      box-shadow: 0 0 20px rgba(255,255,255,0.2);
+      text-align: left;
+      font-size: 1.2em;
+      animation: slideUp 1.5s ease-out;
+      z-index: 10;
+    }
+
+    #dialogue-feedback {
+      text-align: center;
+      font-size: 1.2em;
+      margin-top: 10px;
+      color: #00ffcc;
+      display: none;
+    }
+
+    #answer-box {
+      display: none;
+      margin-top: 10px;
+    }
+
+    #answer-input {
+      width: 100%;
+      padding: 10px;
+      font-size: 1em;
+      border-radius: 10px;
+      border: 2px solid #ffd700;
+    }
+
+    #buttons {
+      margin-top: 15px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    button {
+      background-color: #6a1b9a;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 18px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover { background-color: #8e24aa; }
+
+    #background-scene {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: url('images/28e10ca6ba3fc423b0ef9214bfdb8839 (1).jpg') center/cover no-repeat;
+      z-index: -1;
+      animation: zoomPan 30s infinite linear;
+    }
+
+    #title-screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.85);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 5;
+      animation: fadeIn 3s ease-in-out;
+    }
+
+    #title-screen h1 {
+      font-size: 3em;
+      color: #ffd700;
+      margin-bottom: 20px;
+    }
+
+    #score-display, #timer-display {
+      position: absolute;
+      font-size: 1.2em;
+      background: #000;
+      padding: 8px 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(255,255,255,0.1);
+    }
+
+    #score-display { top: 10px; left: 10px; }
+    #timer-display { top: 10px; right: 10px; }
+
+    #level-up-message {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: rgba(0,0,0,0.9);
+      color: #ffd700;
+      font-size: 2em;
+      padding: 30px 40px;
+      border-radius: 20px;
+      display: none;
+      text-align: center;
+      box-shadow: 0 0 30px #ffd700;
+      z-index: 1000;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0); }
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes zoomPan {
+      0% { transform: scale(1) translate(0, 0); }
+      50% { transform: scale(1.05) translate(10px, -10px); }
+      100% { transform: scale(1) translate(0, 0); }
+    }
+
+    .sparkle {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: #ffd700;
+      border-radius: 50%;
+      pointer-events: none;
+      animation: sparkleAnim 1s linear forwards;
+    }
+
+    @keyframes sparkleAnim {
+      0% { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(2) translateY(-20px); }
+    }
+  </style>
+</head>
+<body>
+<audio autoplay loop>
+  <source src="https://dl.vgmdownloads.com/soundtracks/harry-potter-and-the-sorcerers-stone/vlywkmttwm/01%20-%20Harry%20Potter%20Theme.mp3" type="audio/mpeg">
+</audio>
+<audio id="correct-sound" src="https://www.soundjay.com/button/sounds/button-4.mp3"></audio>
+<audio id="wrong-sound" src="https://www.soundjay.com/button/sounds/button-10.mp3"></audio>
+
+<div id="title-screen">
+  <h1>⚡ TOEFL Quest: Hogwarts Edition 🧙‍♂️</h1>
+  <button onclick="startGame()">Begin Journey</button>
+</div>
+
+<div id="background-scene"></div>
+<div id="score-display">Score: 0</div>
+<div id="timer-display">Time: 0s</div>
+
+<div id="game-container">
+  <img id="girl" class="character" src="images/WhatsApp Image 2025-06-13 at 19.47.04_0087821a.jpg" alt="Hermione">
+  <img id="boy" class="character" src="images/WhatsApp Image 2025-06-13 at 19.47.04_79645a9c.jpg" alt="Ron">
+  <div id="chat-box">
+    <p id="dialogue"></p>
+    <div id="dialogue-feedback"></div>
+    <div id="answer-box">
+      <input type="text" id="answer-input" placeholder="Type your answer...">
+      <div id="buttons">
+        <button onclick="submitAnswer()">Submit</button>
+        <button onclick="nextLine()">Next</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="level-up-message">
+  🎉 Level 2 Unlocked! 🎉<br><br>You're mastering your magic!<br><br>Onward to greater spells! 🦤✨
+</div>
+<script>
+  const grammarQuestions = [
+    { question: "Choose the correct form: 'She ____ to the store yesterday.'", answer: "went" },
+    { question: "Which is correct: 'He don't' or 'He doesn't'?", answer: "he doesn't" },
+    { question: "Fill in the blank: 'They ____ playing football when it started raining.'", answer: "were" },
+    { question: "Choose the correct verb: 'The dog ____ every morning.'", answer: "barks" },
+    { question: "Which word completes the sentence: 'I ____ never seen snow before.'", answer: "have" },
+    { question: "Choose the correct tense: 'By next year, she ____ graduated.'", answer: "will have" },
+    { question: "Fill in the blank: 'If I ____ you, I wouldn’t do that.'", answer: "were" },
+    { question: "Pick the correct word: 'Neither of the boys ____ done their homework.'", answer: "has" },
+    { question: "Fill in: 'We ____ dinner when the phone rang.'", answer: "were having" },
+    { question: "Choose the correct article: 'He adopted ____ dog from the shelter.'", answer: "a" }
+  ];
+
+  let current = 0;
+  let score = 0;
+  let seconds = 0;
+  let timerStarted = false;
+  let timerInterval;
+
+  let dialogueQueue = [
+    "Hermione: Let's see if you’ve finally read something, Ron.",
+    "Ron: Of course I have! I'm ready. Are you going to test me or what?",
+    "Hermione: Fine then. Here comes your first question."
+  ];
+
+  function startGame() {
+    document.getElementById('title-screen').style.display = 'none';
+    document.getElementById('girl').classList.add('enter-scene-girl');
+    document.getElementById('boy').classList.add('enter-scene-boy');
+    nextDialogue();
+  }
+
+  function showDialogue(message) {
+    document.getElementById('dialogue').innerText = message;
+  }
+
+  function nextDialogue() {
+    if (dialogueQueue.length > 0) {
+      const line = dialogueQueue.shift();
+      showDialogue(line);
+      setTimeout(nextDialogue, 4000);
+    } else {
+      document.getElementById('answer-box').style.display = 'block';
+      askQuestion();
+      startTimer();
+    }
+  }
+
+  function startTimer() {
+    if (timerStarted) return;
+    timerStarted = true;
+    timerInterval = setInterval(() => {
+      seconds++;
+      document.getElementById('timer-display').innerText = `Time: ${seconds}s`;
+    }, 1000);
+  }
+
+  function askQuestion() {
+    if (current >= grammarQuestions.length) {
+      document.getElementById('chat-box').style.display = 'none';
+      document.getElementById('level-up-message').style.display = 'block';
+      clearInterval(timerInterval);
+      return;
+    }
+    showDialogue(`Ron: Alright! ${grammarQuestions[current].question}`);
+  }
+
+  function showFeedback(text, color) {
+    const box = document.getElementById('dialogue-feedback');
+    box.innerText = text;
+    box.style.color = color;
+    box.style.display = 'block';
+    setTimeout(() => box.style.display = 'none', 2000);
+  }
+
+  function submitAnswer() {
+    const input = document.getElementById('answer-input').value.trim().toLowerCase();
+    const correctAnswers = grammarQuestions[current].answer.toLowerCase().split(" ");
+    const correctSound = document.getElementById('correct-sound');
+    const wrongSound = document.getElementById('wrong-sound');
+    const isCorrect = correctAnswers.some(word => input.includes(word));
+
+    if (isCorrect) {
+      score++;
+      document.getElementById('score-display').innerText = `Score: ${score}`;
+      correctSound.play();
+      showFeedback("Right Answer!", "#00ffcc");
+      sparkleEffect();
+    } else {
+      wrongSound.play();
+      showFeedback("Wrong Answer!", "#ff4c4c");
+    }
+  }
+
+  function nextLine() {
+    current++;
+    document.getElementById('answer-input').value = '';
+    askQuestion();
+  }
+
+  function sparkleEffect() {
+    for (let i = 0; i < 20; i++) {
+      const sparkle = document.createElement("div");
+      sparkle.classList.add("sparkle");
+      sparkle.style.left = `${Math.random() * 100 + 30}%`;
+      sparkle.style.top = `${Math.random() * 40 + 20}%`;
+      document.body.appendChild(sparkle);
+      setTimeout(() => sparkle.remove(), 1000);
+    }
+  }
+</script>
+</body>
+</html>
+
+

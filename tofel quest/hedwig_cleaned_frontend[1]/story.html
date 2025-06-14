@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TOEFL Quest: Hogwarts Edition</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Georgia', serif;
+      background: #000;
+      color: #fff;
+      overflow: hidden;
+    }
+    #game-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+    }
+    .character {
+      position: absolute;
+      width: 130px;
+      transition: all 2s ease-in-out;
+      animation: float 3s infinite ease-in-out;
+    }
+    #girl { bottom: 30%; left: -150px; }
+    #boy { bottom: 10%; right: -150px; }
+    .enter-scene-girl { left: 25% !important; }
+    .enter-scene-boy { right: 25% !important; }
+    #chat-box {
+      position: absolute;
+      bottom: 40%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.7);
+      border-radius: 20px;
+      padding: 20px;
+      width: 300px;
+      box-shadow: 0 0 20px rgba(255,255,255,0.2);
+      text-align: left;
+      font-size: 1.2em;
+      animation: slideUp 1.5s ease-out;
+    }
+    #answer-box {
+      display: none;
+      margin-top: 10px;
+    }
+    #answer-input {
+      width: 100%;
+      padding: 10px;
+      font-size: 1em;
+      border-radius: 10px;
+      border: 2px solid #ffd700;
+    }
+    #buttons {
+      margin-top: 15px;
+      display: flex;
+      justify-content: space-between;
+    }
+    button {
+      background-color: #6a1b9a;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 18px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover { background-color: #8e24aa; }
+    #background-scene {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: url('images/28e10ca6ba3fc423b0ef9214bfdb8839 (1).jpg') center/cover no-repeat;
+      z-index: -1;
+      animation: zoomPan 30s infinite linear;
+    }
+    #title-screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.85);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 5;
+      animation: fadeIn 3s ease-in-out;
+    }
+    #title-screen h1 {
+      font-size: 3em;
+      color: #ffd700;
+      margin-bottom: 20px;
+    }
+    #title-screen button {
+      padding: 12px 30px;
+      font-size: 1.2em;
+    }
+    #score-display, #timer-display {
+      position: absolute;
+      font-size: 1.2em;
+      background: #000;
+      padding: 8px 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(255,255,255,0.1);
+    }
+    #score-display { top: 10px; left: 10px; }
+    #timer-display { top: 10px; right: 10px; }
+    @keyframes float {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0); }
+    }
+    @keyframes slideUp {
+      from { transform: translateY(50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes zoomPan {
+      0% { transform: scale(1) translate(0, 0); }
+      50% { transform: scale(1.05) translate(10px, -10px); }
+      100% { transform: scale(1) translate(0, 0); }
+    }
+  </style>
+</head>
+<body>
+<audio autoplay loop>
+  <source src="https://dl.vgmdownloads.com/soundtracks/harry-potter-and-the-sorcerers-stone/vlywkmttwm/01%20-%20Harry%20Potter%20Theme.mp3" type="audio/mpeg">
+</audio>
+<audio id="correct-sound" src="https://www.soundjay.com/button/sounds/button-4.mp3"></audio>
+<audio id="wrong-sound" src="https://www.soundjay.com/button/sounds/button-10.mp3"></audio>
+<div id="title-screen">
+  <h1>⚡ TOEFL Quest: Hogwarts Edition 🧙‍♂️</h1>
+  <button onclick="startGame()">Begin Journey</button>
+</div>
+<div id="background-scene"></div>
+<div id="score-display">Score: 0</div>
+<div id="timer-display">Time: 0s</div>
+<div id="game-container">
+  <img id="girl" class="character" src="images/WhatsApp Image 2025-06-13 at 19.47.04_0087821a.jpg" alt="Hermione">
+  <img id="boy" class="character" src="images/WhatsApp Image 2025-06-13 at 19.47.04_79645a9c.jpg" alt="Ron">
+  <div id="chat-box">
+    <p id="dialogue"></p>
+    <div id="answer-box">
+      <input type="text" id="answer-input" placeholder="Type your answer...">
+      <div id="buttons">
+        <button onclick="submitAnswer()">Submit</button>
+        <button onclick="nextLine()">Next</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+const questions = [
+  { question: "What's the synonym of 'happy'?", answer: "joyful cheerful content glad" },
+  { question: "What’s the opposite of 'generous'?", answer: "selfish stingy miserly ungenerous" }
+];
+
+let current = 0;
+let score = 0;
+let seconds = 0;
+let timerInterval;
+let timerStarted = false;
+let dialogueQueue = [
+  "Hermione: Let's see if you’ve finally read something, Ron.",
+  "Ron: Of course I have! I'm ready. Are you going to test me or what?",
+  "Hermione: Fine then. Here comes your first question."
+];
+
+function startTimer() {
+  if (timerStarted) return;
+  timerStarted = true;
+  timerInterval = setInterval(() => {
+    seconds++;
+    document.getElementById('timer-display').innerText = `Time: ${seconds}s`;
+  }, 1000);
+}
+
+function showDialogue(message) {
+  document.getElementById('dialogue').innerText = message;
+}
+
+function startGame() {
+  document.getElementById('title-screen').style.display = 'none';
+  document.getElementById('girl').classList.add('enter-scene-girl');
+  document.getElementById('boy').classList.add('enter-scene-boy');
+  nextDialogue();
+}
+
+function nextDialogue() {
+  if (dialogueQueue.length > 0) {
+    const line = dialogueQueue.shift();
+    showDialogue(line);
+    setTimeout(nextDialogue, 2500);
+  } else {
+    document.getElementById('answer-box').style.display = 'block';
+    askQuestion();
+    startTimer();
+  }
+}
+
+function askQuestion() {
+  if (current >= questions.length) {
+    showDialogue(`Hermione: Game over. You scored ${score}. Honestly, not bad for you.`);
+    clearInterval(timerInterval);
+    return;
+  }
+  showDialogue(`Ron: Alright! ${questions[current].question}`);
+}
+
+function submitAnswer() {
+  const input = document.getElementById('answer-input').value.trim().toLowerCase();
+  const correctAnswers = questions[current].answer.toLowerCase().split(" ");
+  const correctSound = document.getElementById('correct-sound');
+  const wrongSound = document.getElementById('wrong-sound');
+  const isCorrect = correctAnswers.some(word => input.includes(word));
+
+  const happyRonLines = [
+    "Ron: Ha! Told you I’m not just a pretty face!",
+    "Ron: Boom! Nailed it!",
+    "Ron: I should get extra points for style!",
+    "Ron: Bet you didn’t expect that, did you Hermione?"
+  ];
+
+  const sadRonLines = [
+    "Ron: Oh no, not again...",
+    "Ron: I'm never gonna hear the end of this.",
+    "Ron: Why is everything a test with you?",
+    "Ron: Maybe I'm just not cut out for this..."
+  ];
+
+  if (isCorrect) {
+    score++;
+    document.getElementById('score-display').innerText = `Score: ${score}`;
+    correctSound.play();
+    document.getElementById('boy').style.transform = 'translateX(-20px)';
+    document.getElementById('girl').style.transform = 'translateX(20px)';
+
+    const line = happyRonLines[Math.floor(Math.random() * happyRonLines.length)];
+    showDialogue(line);
+    setTimeout(() => showDialogue("Hermione: Miracles do happen."), 2000);
+  } else {
+    wrongSound.play();
+    document.getElementById('boy').style.transform = 'translateY(10px)';
+    document.getElementById('girl').style.transform = 'translateY(-10px)';
+
+    const line = sadRonLines[Math.floor(Math.random() * sadRonLines.length)];
+    showDialogue(line);
+    setTimeout(() => showDialogue("Hermione: Maybe actually *read* next time?"), 2000);
+  }
+}
+
+
+function nextLine() {
+  current++;
+  document.getElementById('answer-input').value = '';
+  document.getElementById('boy').style.transform = 'translateX(0) translateY(0)';
+  document.getElementById('girl').style.transform = 'translateX(0) translateY(0)';
+  askQuestion();
+}
+</script>
+</body>
+</html>
