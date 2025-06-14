@@ -1,0 +1,181 @@
+@font-face {
+  font-family: 'HarryPotter';
+  src: url('../assets/font/harry.ttf') format('truetype');
+}
+
+body {
+  font-family: 'HarryPotter', cursive, sans-serif;
+  background-image: url('./images/back1.jpeg');
+  background-size: cover;
+  color: #f8f8ff;
+  text-align: center;
+  padding: 20px;
+  min-height: 100vh;
+}
+
+.header h1 {
+  font-size: 3rem;
+  color: #ffd700;
+  text-shadow: 2px 2px 5px #000;
+  margin-bottom: 10px;
+}
+
+.header h2 {
+  font-size: 1.5rem;
+  margin-bottom: 30px;
+  color: #add8e6;
+}
+
+#stats {
+  font-size: 1.2rem;
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-bottom: 30px;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 0 10px #000;
+}
+
+.roadmap {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.level {
+  padding: 15px 30px;
+  font-size: 1.2rem;
+  border-radius: 8px;
+  background: linear-gradient(to right, #6b4226, #d4af37);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.level:hover {
+  transform: scale(1.1);
+}
+
+.level.locked {
+  background: gray;
+  cursor: not-allowed;
+}
+
+.modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.quiz-box {
+  background: rgba(0, 0, 0, 0.85);
+  padding: 25px 40px;
+  border-radius: 15px;
+  width: 350px;
+  color: #ffffff;
+  border: 2px solid #ffd700;
+}
+
+.quiz-box input {
+  width: 90%;
+  padding: 10px;
+  margin-top: 15px;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: none;
+}
+
+.quiz-box button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  background: #ffd700;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.quiz-box button:hover {
+  background: #e0c200;
+}
+
+#feedback {
+  margin-top: 10px;
+  font-size: 1rem;
+}
+
+
+
+@keyframes explode {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--x), var(--y)) scale(0.2);
+    opacity: 0;
+  }
+}
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('/mathwarts/images/back1.jpeg') center/cover no-repeat;
+  backdrop-filter: blur(2px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.tutorial-box {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 30px;
+  border-radius: 12px;
+  width: 60%;
+  font-family: 'HarryFont', cursive;
+  text-align: left;
+  color: #3b1f0d;
+  box-shadow: 0 0 15px gold;
+  animation: fadeIn 1s ease-in-out;
+}
+
+.tutorial-box h2 {
+  font-size: 28px;
+  justify-content:center;
+  color: darkgoldenrod;
+}
+
+.tutorial-box button {
+  background-color: #5d3a00;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 18px;
+  margin-top: 20px;
+  cursor: pointer;
+  box-shadow: 0 0 5px #ffcc00;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

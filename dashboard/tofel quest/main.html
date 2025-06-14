@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hogwarts Learning Map</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Georgia', serif;
+      background-color: #4B3621;
+      overflow: hidden;
+    }
+
+    .map-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      background-image: url('images/WhatsApp Image 2025-06-14 at 09.46.58_00e32109.jpg');
+      background-size: cover;
+      background-position: center;
+    }
+
+    .level {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      color: 	#3C2F2F;
+      font-weight: bold;
+      font-size: 18px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      border: 3px solid #3b2617;
+      transition: transform 0.2s ease-in-out;
+      box-shadow: 0 0 15px rgba(255,255,255,0.8), 0 0 30px rgba(255,255,255,0.6);
+      background-color: #9e8c7a ;
+      clip-path: polygon(
+        50% 0%, 93% 25%, 93% 75%, 
+        50% 100%, 7% 75%, 7% 25%
+      );
+      animation: glow 2s infinite ease-in-out;
+    }
+
+    @keyframes glow {
+      0%, 100% {
+        box-shadow: 0 0 10px #fff, 0 0 20px #fdd;
+      }
+      50% {
+        box-shadow: 0 0 20px #ffd700, 0 0 40px #ffcc00;
+      }
+    }
+
+    .level.locked {
+      background-color: #9e8c7a;
+      cursor: not-allowed;
+      box-shadow: none;
+      animation: none;
+    }
+
+    .level.completed {
+      background-color: #9e8c7a;
+      color: #333;
+    }
+
+    audio {
+      display: none;
+    }
+
+    .next-level-btn {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      background-color: #4b2e17;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(0,0,0,0.4);
+      transition: background-color 0.3s;
+    }
+
+    .next-level-btn:hover {
+      background-color: #6b3a1f;
+    }
+  </style>
+</head>
+<body>
+
+<audio autoplay loop>
+  <source src="https://cdn.pixabay.com/download/audio/2022/10/04/audio_4ec8b54fb7.mp3?filename=wizard-128379.mp3" type="audio/mpeg">
+</audio>
+
+<div class="map-container" id="mapContainer">
+  <button class="next-level-btn" onclick="goToNextLevel()">Next Level</button>
+</div>
+
+<script>
+  const map = document.getElementById('mapContainer');
+  const totalLevels = 3;
+  const unlockedUntil = parseInt(localStorage.getItem('unlockedLevel')) || 1;
+
+  const levelFiles = [
+    'grammar.html',        // Level 1
+    'vocabulary.html',     // Level 2
+    'comprehension.html'   // Level 3
+  ];
+
+  const centerX = 50;
+  const centerY = 50;
+  const radius = 25;
+  const degreesToRadians = deg => deg * (Math.PI / 180);
+
+  const positions = Array.from({ length: totalLevels }, (_, i) => {
+    const angle = (360 / totalLevels) * i - 90;
+    return {
+      top: `${centerY + radius * Math.sin(degreesToRadians(angle))}%`,
+      left: `${centerX + radius * Math.cos(degreesToRadians(angle))}%`
+    };
+  });
+
+  positions.forEach((pos, i) => {
+    const level = document.createElement('div');
+    level.classList.add('level');
+    level.textContent = i + 1;
+    level.style.top = pos.top;
+    level.style.left = pos.left;
+
+    if (i + 1 > unlockedUntil) level.classList.add('locked');
+    else if (i + 1 < unlockedUntil) level.classList.add('completed');
+
+    level.addEventListener('click', () => {
+      if (level.classList.contains('locked')) {
+        alert('This level is locked. Complete previous ones first!');
+        return;
+      }
+
+      window.location.href = levelFiles[i];
+    });
+
+    map.appendChild(level);
+  });
+
+  function goToNextLevel() {
+    if (unlockedUntil < totalLevels) {
+      window.location.href = levelFiles[unlockedUntil]; // Go to next level
+    } else {
+      alert("All levels completed! 🎉");
+    }
+  }
+</script>
+
+</body>
+</html>

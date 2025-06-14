@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mathwarts: School of Magical Mathcraft</title>
+  <link rel="stylesheet" href="/mathwarts/style.css" />
+  <script defer src="/mathwarts/game.js"></script>
+</head>
+<body>
+  <div class="header">
+    <h1>⚡ Mathwarts: School of Magical Mathcraft ⚡</h1>
+    <h2 id="house-name">🧙‍ Awaiting House Sorting...</h2>
+  </div>
+
+  <div id="tutorial-section">
+    <div class="tutorial-box">
+      <h2>🔮 What is Probability?</h2>
+      <p class="animated-text">
+        Probability is like guessing the chances of something happening.<br />
+        In the wizarding world, it's like asking: “What’s the chance Ron forgets his wand again?” 🤔
+      </p>
+      <p>
+        Example: If there are 3 chocolate frogs and 1 Bertie Bott’s Every Flavour Bean,<br />
+        Probability of getting a frog = 3 out of 4 = <strong>0.75</strong> 🐸
+      </p>
+      <button id="begin-challenge">✨ Begin Challenge</button>
+    </div>
+  </div>
+
+  <div id="stats" class="hidden">
+    <span>XP: <span id="xp">0</span></span>
+    <span>Coins: <span id="coins">0</span></span>
+    <span>Level: <span id="level">1</span></span>
+  </div>
+
+  <div class="roadmap hidden">
+    <button class="level" onclick="startLevel(1)">📘 Level 1 🦉</button>
+    <button class="level locked" onclick="startLevel(2)">📕 Level 2 🦉</button>
+    <button class="level locked" onclick="startLevel(3)">📗 Level 3 🦉</button>
+  </div>
+
+  <div id="quiz-modal" class="modal hidden">
+    <div class="quiz-box">
+      <h3 id="question">Question goes here</h3>
+      <input type="text" id="answer" placeholder="Type your answer" />
+      <button onclick="submitAnswer()">Submit</button>
+      <p id="feedback"></p>
+    </div>
+  </div>
+</body>
+</html>
